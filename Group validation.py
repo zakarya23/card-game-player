@@ -1,105 +1,21 @@
-def comp10001go_play(discard_history, player_no, hand): 
-    '''Selects cards for the player based on some conditions
-    '''
-    my_cards = [] 
-    for groups in discard_history: 
-        my_cards.append(groups[player_no]) 
+def comp10001go_valid_groups(groups):
+    '''Takes a group of cards and returns whether they are valid or not'''
     
-    # Separates aces if any present
-    aces = []
-    for card in hand: 
-        if card[0] == 'A':
-            aces.append(card)
+    # Checks which cards in the groups were valid. 
+    valid = []
+    for group in groups: 
+        output = comp10001go_score_group(group)
+        if output > 0: 
+            valid.append(output) 
     
-    # If one card left then just returns that card
-    if len(hand) == 1: 
-        return hand[0]
-    
-    # If only aces are left then returns the ace. 
-    elif len(hand) == len(aces): 
-        return hand[0]
-    score_dict = {}
-    scores = []
-    
-    # From hand, tries to choose any card that is not a ace. 
-    for new_card in hand: 
-        if new_card[0] != 'A' and len(hand) > 1: 
+    # If all groups were valid then returns True else returns False.
+    if len(valid) == len(groups): 
+        return True
+    return False
             
-            my_cards.append(new_card) 
-            score = comp10001go_score_group(my_cards)
-
-            scores.append(score)
-            score_dict[score] = new_card 
-    maximum = (max(scores))
-    
-    for key, val in score_dict.items(): 
-        if key == maximum: 
-            return val 
+       
         
-            
         
-def comp10001go_group(discard_history, player_no):
-    '''Groups cards based on some rules'''
-    str_cards = {'1': 1, '2': 2, '3': 3, '4': 4, '5': 5, '6': 6,
-             '7': 7, '8': 8, '9': 9, '0': 10, 'J': 11,
-             'Q': 12, 'K': 13, 'A': 20}
-    revstr_cards = {'1': 1, '2': 2, '3': 3, '4': 4, '5': 5, '6': 6,
-             '7': 7, '8': 8, '9': 9, '10': '0', '11': 'J',
-             '12': 'Q', '13': 'K', '20': 'A'}
- 
-    
-    my_cards = []
-    values = set()
-    for group in discard_history: 
-        my_cards.append(group[player_no])
-      
-    
-    for cards in sorted(my_cards): 
-        values.add(int(str_cards[cards[0]])) 
-    
-        
-    new_list = []
-    f_list = []
-    for i in sorted(list(values)): 
- 
-        new_list.append(revstr_cards[str(i)])
-        val = revstr_cards[str(i)]                
-        for card in my_cards: 
-            if int(str_cards[card[0]]) == int(str_cards[str(val)]):
-                f_list.append(card)
-     
-    # Seprates cards  
-    from itertools import groupby 
-    group_list = []
-    values = []  
-    out = []
-    
-    for rank, group in groupby(f_list, first):
-        a = list(group) 
-        group_list.append(a) 
-   
-    
-        
-    for card in group_list: 
-        aces = []
-        if card[0][0] == 'A': 
-            aces.append(card) 
-            for i in (aces[0]): 
-                out.append([i]) 
-                 
-        elif len(card) > 1 and card[0][0] != 'A': 
-            out.append(card)
-        else: 
-            out.append(card)
-            
-                 
-    return out
-     
-    
-     
-        
-
-
 def comp10001go_score_group(cards):
     '''Takes a list of cards and returns the score based on a set of rules'''
             
@@ -122,7 +38,7 @@ def comp10001go_score_group(cards):
     # If theres only one type of card then its considered singleton so that 
     # card is returned with a negative value.
     if len(cards) ==1:
-        return str_cards[cards[0][0]] * -1
+        return str_cards[cards[0][0]] 
     
     # Separtes Aces into a separate list             
     ace = []         
@@ -260,7 +176,7 @@ def comp10001go_score_group(cards):
                         ([aces[position]][0][1]) in red and
                         ([aces[position + 1]][0][1]) in black): 
                         for num in range(int(new_list[0][0]),
-                                         int(new_list[-1][0]) + 1):
+                                       int(new_list[-1][0]) + 1):
                             score +=num 
                         return score
                     else: 
@@ -301,7 +217,6 @@ def comp10001go_score_group(cards):
 
                 
 def first(x): 
-    '''Returns first letter of a input given'''
     return x[0]
 
 def factorial(num): 
@@ -326,4 +241,7 @@ def invalid(cards):
         else: 
             total += int(str_cards[card[0]])
     return total * -1
+
+
+
 
